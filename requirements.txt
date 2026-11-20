@@ -10,3 +10,4 @@ llama-index
 llama-index-embeddings-huggingface
 llama-index-llms-openai
 llama-index-vector-stores-chroma
+fonttools

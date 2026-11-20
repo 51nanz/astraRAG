@@ -1,12 +1,13 @@
 import logging
 import chromadb
+import pymupdf
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext
 from llama_index.core.node_parser import SimpleNodeParser
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.vector_stores.chroma import ChromaVectorStore
-
+from llama_index.readers.file import PyMuPDFReader
 from src.rag_doc_ingestion.config.doc_ingestion_settings import DocIngestionSettings
-
+from llama_index.readers.file import PyMuPDFReader
 
 # Set up logging configuration
 logging.basicConfig(
@@ -31,7 +32,16 @@ def build_vector_store_from_documents():
         vector_store_path = settings.VECTOR_STORE_DIR
         collection_name = settings.COLLECTION_NAME
         logger.info(f"Loading documents from directory: {docs_dir_path}")
-        loader = SimpleDirectoryReader(input_dir=docs_dir_path)
+
+        
+
+
+        # loader = SimpleDirectoryReader(input_dir=docs_dir_path)
+        loader = SimpleDirectoryReader(
+            input_dir=docs_dir_path,
+            file_extractor={".pdf": PyMuPDFReader()},
+            raise_on_error=True,  # stop on failures instead of silently skipping
+        )
         documents = loader.load_data()
         # Create parser with chunking strategy
         parser = SimpleNodeParser.from_defaults(chunk_size=1024, chunk_overlap=50)
